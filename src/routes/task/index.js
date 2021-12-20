@@ -62,7 +62,7 @@ taskRouter
 .get(async (req, res, next) => {
     try {
         const result = await Task.findByPk(req.params.id)
-        console.log(result)
+
         res.send(result)
     } catch (error) {
         console.log(error)
