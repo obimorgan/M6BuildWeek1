@@ -12,7 +12,7 @@ export const testDB = async () => {
   try {
     await sequelize.authenticate({ logging: false });
     console.log("DB is authenticated");
-    await sequelize.sync()
+    await sequelize.sync({logging: false})
     console.log("DB is established");
   } catch (error) {
     console.log("Failed to authenticate", error);
