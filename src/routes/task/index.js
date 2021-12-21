@@ -36,7 +36,7 @@ taskRouter
             where: { id: req.params.id },
             returning: true
         })
-        res.status(2001).send(updateTasks[1][0])
+        res.status(201).send(updateTasks[1][0])
     } catch (error) {
         console.log(error)
         next(error)
