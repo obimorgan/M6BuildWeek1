@@ -16,7 +16,6 @@ const Task = sequelize.define(
         },
         done: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
             defaultValue: false
         }
     }
