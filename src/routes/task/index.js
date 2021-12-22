@@ -20,6 +20,11 @@ taskRouter
                         [Op.iLike]: `%${req.query.task}%`
                     }
                 }
+            }),
+            ...(req.query.planner && {
+                where: {
+                    [Op.eq]: req.query.planner
+                }
             })
         })
         res.send(tasks)
