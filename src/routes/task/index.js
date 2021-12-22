@@ -88,9 +88,7 @@ taskRouter
 .delete(async (req,res, next) => {
     try {
         if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
-        // const result = await Task.destroy({
-        //     where: { id: req.params.id }
-        // })
+
         const result = await Task.update({
             done: true
         }, {
@@ -118,6 +116,19 @@ taskRouter
     }
 })
 
+taskRouter.delete('/:id/delete', async (req,res, next) => {
+    try {
+        if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
+        const result = await Task.destroy({
+            where: { id: req.params.id }
+        })
+        if (result < 1) return res.status(404).send("not found")
+        return res.send("ok")
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
 
 
 export default taskRouter
