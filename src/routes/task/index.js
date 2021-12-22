@@ -25,6 +25,12 @@ taskRouter
                 where: {
                     [Op.eq]: req.query.planner
                 }
+            }),
+            ...(req.query.page && {
+                offset: req.query.page || 0
+            }),
+            ...(req.query.limit && {
+                limit: req.query.limit || 5
             })
         })
         res.send(tasks)
