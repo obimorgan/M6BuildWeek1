@@ -17,7 +17,7 @@ plannerRouter.get("/", async (req, res, next) => {
 //.2
 plannerRouter.get("/:id", async (req, res, next) => {
     try {
-
+    if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
      const plan = await Planner.findByPk(req.params.id)
      if(plan)  {
          res.send(plan)
@@ -43,7 +43,7 @@ plannerRouter.post("/", async (req, res, next) => {
 //.4
 plannerRouter.put("/:id", async (req, res, next) => {
     try {
-
+    if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
      const plan = await Planner.update(req.body,{
      where  :{id:req.params.id},
      returning: true
@@ -57,6 +57,7 @@ plannerRouter.put("/:id", async (req, res, next) => {
 //.5
 plannerRouter.delete("/:id", async (req, res, next) => {
     try {
+    if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
      const plan = await Planner.destroy({
           where: {
             id: req.params.id,

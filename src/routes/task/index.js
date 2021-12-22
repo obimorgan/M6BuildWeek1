@@ -1,5 +1,7 @@
 import express from "express"
 import {Task} from "../../db/models/index.js"
+import createHttpError from "http-errors"
+import { Op } from "sequelize"
 
 const taskRouter = express.Router()
 
@@ -7,20 +9,27 @@ taskRouter
 .route("/")
 .get( async (req, res, next) => {
     try {
-        const tasks = await Task.findAll()
+        const tasks = await Task.findAll({
+            ...(req.query.task && {
+                where: {
+                    task: {
+                        [Op.iLike]: `%${req.query.task}%`
+                    }
+                }
+            })
+        })
         res.send(tasks)
     } catch (error) {
         console.log(error)
         next(error)
     }
 })
-
 .post(async (req, res, next) => {
     try {
-        const { plannerId, task, done } = req.body
-        console.log(req.body)
+        delete req.body.id
         const newTask = await Task.create(req.body)
-        res.send(newTask)
+        if (newTask.id) return res.send(newTask)
+        next(createHttpError(400, 'Bad Request'))
     } catch (error) {
         console.log(error)
         next(error)
@@ -31,29 +40,27 @@ taskRouter
 .route("/:id")
 .put(async (req, res, next) => {
     try {
+        if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
+        if (req.body === {}) return res.status(400).send('Must Provide A Body')
         console.log(req.body)
         const updateTasks = await Task.update(req.body, {
             where: { id: req.params.id },
             returning: true
         })
-        res.status(2001).send(updateTasks[1][0])
-    } catch (error) {
+        res.status(201).send(updateTasks[1][0])
+    } catch (error) {   
         console.log(error)
         next(error)
     }
 })
 .delete(async (req,res, next) => {
     try {
+        if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
         const result = await Task.destroy({
-            where: {
-                id: req.params.id
-            }
+            where: { id: req.params.id }
         })
-        if (result > 0) {
-            res.send("ok")
-        }else{
-            res.status(404).send("not found")
-        }
+        if (result < 1) return res.status(404).send("not found")
+        return res.send("ok")
     } catch (error) {
         console.log(error)
         next(error)
@@ -61,8 +68,10 @@ taskRouter
 })
 .get(async (req, res, next) => {
     try {
+        if (req.params.id.length !== 36) return res.status(400).send('Invalid ID')
+        // if (req.params.id.length !== 36) return next(createHttpError(400, 'Invalid ID'))
         const result = await Task.findByPk(req.params.id)
-
+        if (!result) return res.status(404).send('Not Found')
         res.send(result)
     } catch (error) {
         console.log(error)
