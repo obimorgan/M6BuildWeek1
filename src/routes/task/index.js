@@ -29,11 +29,11 @@ taskRouter
                     }
                 }
             }),
-            ...(req.query.page && {
-                offset: req.query.page || 0
-            }),
             ...(req.query.limit && {
-                limit: req.query.limit || 5
+                limit: req.query.limit || 3
+            }),
+            ...(req.query.page && {
+                offset: (req.query.page * req.query.limit) || 0
             })
         })
         res.send(tasks)
