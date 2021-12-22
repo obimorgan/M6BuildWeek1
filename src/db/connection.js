@@ -1,17 +1,12 @@
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv"
 dotenv.config() 
-const { DATABASE_URL } = process.env;
+const { PGPORT, PGUSER, PGDATABASE, PGPASSWORD, PGHOST } = process.env;
 
-const sequelize = new Sequelize(DATABASE_URL, {
-  logging: false,
+const sequelize = new Sequelize(PGDATABASE, PGUSER, PGPASSWORD, {
+  port: PGPORT,
+  host: PGHOST,
   dialect: "postgres",
-  dialectOptions: {       
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
 });
 
 export const testDB = async () => {

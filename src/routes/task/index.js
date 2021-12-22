@@ -23,7 +23,10 @@ taskRouter
             }),
             ...(req.query.planner && {
                 where: {
-                    [Op.eq]: req.query.planner
+                    done: false,
+                    plannerId: {
+                        [Op.eq]: req.query.planner
+                    }
                 }
             }),
             ...(req.query.page && {
